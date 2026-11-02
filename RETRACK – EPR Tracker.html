@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RETRACK – EPR Tracker</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Instrument+Sans:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#f2f5ef;--card:#fbfcfa;--ink:#14302b;--mute:#5d6d68;--brand:#1d6b57;--on:#fff;--stamp:#c98a14;--rust:#b8432a;--line:#dbe3dc;--track:#e3e9e4;--okb:#dcefe7;--okt:#14513f;--mb:#f8ecc9;--mt:#7a5200;--hb:#f7ddd5;--ht:#8f2f19;--hd:#14302b;--hdt:#f2f5ef;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1d1a;--card:#172a26;--ink:#e6efe9;--mute:#9fb2ab;--brand:#4cc3a0;--on:#0f1d1a;--stamp:#e3a93a;--rust:#e8795c;--line:#29403a;--track:#233832;--okb:#1d3d34;--okt:#8fe0c4;--mb:#3d3217;--mt:#f0c969;--hb:#442019;--ht:#f4a894;--hd:#0a1412;--hdt:#e6efe9;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1d1a;--card:#172a26;--ink:#e6efe9;--mute:#9fb2ab;--brand:#4cc3a0;--on:#0f1d1a;--stamp:#e3a93a;--rust:#e8795c;--line:#29403a;--track:#233832;--okb:#1d3d34;--okt:#8fe0c4;--mb:#3d3217;--mt:#f0c969;--hb:#442019;--ht:#f4a894;--hd:#0a1412;--hdt:#e6efe9;color-scheme:dark}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Instrument Sans",system-ui,Segoe UI,Arial,sans-serif}
+h1,h2,h3{font-family:Fraunces,Georgia,serif;margin:0}
+header{display:flex;align-items:center;gap:20px;padding:14px 24px;background:var(--hd);color:var(--hdt);flex-wrap:wrap}
+header h1{font-size:23px;letter-spacing:.5px}header h1 i{color:var(--stamp);font-style:normal}
+nav{flex:1;display:flex;gap:6px}nav button,#who button{background:none;color:var(--hdt);border:1px solid transparent;margin:0;padding:6px 12px}
+nav button.on{border-color:var(--stamp)}#who{display:flex;gap:10px;align-items:center;font-size:14px}
+main{max-width:980px;margin:22px auto;padding:0 16px}
+.panel{background:var(--card);border:1px solid var(--line);border-radius:6px;padding:18px 20px;margin-bottom:16px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin-bottom:16px}
+.stat{border-left:4px solid var(--brand);background:var(--card);padding:10px 14px;border-radius:0 6px 6px 0}
+.stat.bad{border-color:var(--rust)}.stat small{color:var(--mute)}.stat b{display:block;font:700 28px Fraunces,Georgia,serif}
+.bars .row{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:13px}.bars .l{width:150px}
+.bars .t{flex:1;background:var(--track);height:14px;border-radius:3px}.bars .f{display:block;height:14px;background:var(--brand);border-radius:3px;min-width:2px}
+.bar{display:flex;gap:8px;margin:0 0 12px;flex-wrap:wrap}.bar input{flex:1;min-width:170px}
+.wrap{overflow-x:auto}table{width:100%;border-collapse:collapse;background:var(--card);border:1px solid var(--line)}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);font-size:14px}th{color:var(--mute);font-weight:600}
+tr.go{cursor:pointer}tr.go:hover{background:var(--track)}
+.b{padding:2px 9px;border-radius:20px;font-size:12px;font-weight:600;background:var(--okb);color:var(--okt);white-space:nowrap}
+.b.Medium{background:var(--mb);color:var(--mt)}.b.High{background:var(--hb);color:var(--ht)}
+input,select,textarea{padding:9px;border:1px solid var(--line);border-radius:5px;font:inherit;background:var(--card);color:var(--ink)}
+label{display:block;margin:12px 0 4px;font-size:13px;font-weight:600}form input,form select{width:100%;max-width:380px}
+button{padding:9px 16px;border:0;border-radius:5px;background:var(--brand);color:var(--on);font:600 14px inherit;cursor:pointer;margin-top:12px}
+button.ghost{background:none;border:1px solid var(--line);color:var(--ink);margin:0}
+:focus-visible{outline:2px solid var(--stamp);outline-offset:2px}
+.err{color:var(--rust);font-weight:600;margin-top:10px}.hint{font-size:13px;color:var(--mute)}
+.flag{background:var(--hb);color:var(--ht);border-left:4px solid var(--rust);padding:9px 12px;margin:8px 0;border-radius:0 5px 5px 0;font-size:14px}
+.note{background:var(--track);padding:10px 12px;border-radius:5px;margin-top:10px;font-size:14px}
+.strip{display:flex;gap:4px;margin:14px 0}.strip div{flex:1;padding:8px 4px;text-align:center;font-size:12px;background:var(--track);color:var(--mute);border-radius:4px}
+.strip .d{background:var(--brand);color:var(--on)}.strip .c{background:var(--stamp);color:#1b1405;font-weight:700}
+.chain{position:relative;margin:6px 0 0 8px;padding-left:22px;border-left:2px solid var(--brand)}
+.chain.broken{border-color:var(--rust)}.node{position:relative;padding:0 0 16px}
+.node:before{content:"";position:absolute;left:-30px;top:5px;width:12px;height:12px;border-radius:50%;background:var(--card);border:3px solid var(--brand)}
+.hash{font:12px ui-monospace,Consolas,monospace;color:var(--mute)}
+.ok{color:var(--brand);font-weight:600}.bad{color:var(--rust);font-weight:700}
+.login{max-width:360px;margin:50px auto}.login input{max-width:none}
+textarea{width:100%;height:260px;font:12px ui-monospace,Consolas,monospace}
+</style>
+</head>
+<body>
+<header><h1>RE<i>TRACK</i></h1><nav id="nav"></nav><div id="who"></div></header>
+<main id="app"></main>
+<script>
+const STAGES=["Registered","Sold/Distributed","Collected","Handed to Recycler","Recycled","Certified"];
+const RULES=[{r:["Brand"],n:[]},{r:["Brand"],n:[]},{r:["Brand","Recycler"],n:[]},{r:["Brand","Recycler"],n:["recycler"]},{r:["Recycler"],n:["recycledWeightKg"]},{r:["Regulator"],n:["certificateNo"]}];
+const LABEL={recycler:"Recycler name",recycledWeightKg:"Recycled weight (kg)",certificateNo:"Certificate number"};
+const RANGE={laptop:[1.2,4],phone:[.1,.3],tablet:[.3,1],tv:[4,30]};
+const USERS={brand:"Brand",recycler:"Recycler",regulator:"Regulator"},PW="retrack123",KEY="retrack_v3",H=36e5;
+let db=null,me=null,V={n:"dash",id:null,q:"",st:""},cache=[];
+try{const s=sessionStorage.getItem("rt_me");if(s)me=JSON.parse(s)}catch(e){}
+const $=i=>document.getElementById(i);
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=d=>new Date(d).toLocaleString();
+const err=m=>{const e=$("err");if(e)e.textContent=m};
+
+// ---- tamper-evident hash chain (SHA-256) ----
+async function sha(s){const b=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(s));return[...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,"0")).join("")}
+const eh=(id,p,h)=>sha([id,p,h.stage,h.date,h.note,h.recordedBy,JSON.stringify(h.proof||{})].join("|"));
+async function addEntry(b,e){const p=b.history.length?b.history[b.history.length-1].hash:"GENESIS";e.proof=e.proof||{};e.prevHash=p;e.hash=await eh(b.id,p,e);b.history.push(e)}
+async function chainOk(b){let p="GENESIS";for(const h of b.history){if(h.prevHash!==p||h.hash!==await eh(b.id,p,h))return false;p=h.hash}return true}
+
+// ---- sample data and storage (browser localStorage) ----
+async function seed(){
+  const S=[["B-1001","Aero 14 Laptop","laptop",200,440,"2026-08-01",[0,456]],
+  ["B-1002","Nova X Phone","phone",1000,185,"2026-07-01",[0,216,1584]],
+  ["B-1003","ViewMax 43 TV","tv",50,550,"2026-03-01",[0,264,2160,2232,2616,2856],{recycler:"GreenLoop Recyclers",recycledWeightKg:530,certificateNo:"CERT-2026-0042"}],
+  ["B-1004","Aero 13 Laptop (suspicious)","laptop",1000,50,"2026-09-10",[0,1,2,3,6],{recycler:"QuickScrap Co",recycledWeightKg:48}],
+  ["B-1005","Tab S Tablet (duplicate certificate)","tablet",300,180,"2026-02-01",[0,336,1992,2040,2520,2700],{recycler:"GreenLoop Recyclers",recycledWeightKg:175,certificateNo:"CERT-2026-0042"}]];
+  const who=["Brand","Brand","Recycler","Brand","Recycler","Regulator"],out=[];
+  for(const[id,productName,category,quantity,totalWeightKg,start,hrs,x]of S){
+    const b={id,brand:"Demo Brand",productName,category,quantity,totalWeightKg,history:[],...(x||{})},t0=new Date(start+"T09:00:00Z").getTime();
+    for(let i=0;i<hrs.length;i++){
+      const proof=x&&i==3?{recycler:x.recycler}:x&&i==4?{recycledWeightKg:x.recycledWeightKg}:x&&i==5?{certificateNo:x.certificateNo}:{};
+      await addEntry(b,{stage:STAGES[i],date:new Date(t0+hrs[i]*H).toISOString(),note:i==0?"Batch registered":"",recordedBy:who[i],proof});
+    }
+    b.currentStage=STAGES[hrs.length-1];out.push(b);
+  }
+  return{targetPercent:50,batches:out};
+}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(db))}catch(e){}};
+async function init(){
+  try{const s=localStorage.getItem(KEY);if(s)db=JSON.parse(s)}catch(e){}
+  if(!db||!db.batches){db=await seed();save()}
+}
+
+// ---- explainable AI checks, risk score 0-100 ----
+async function enrich(b){
+  const f=[],r=RANGE[b.category],per=b.totalWeightKg/b.quantity,ok=await chainOk(b);
+  if(r&&(per<r[0]||per>r[1]))f.push([40,`Weight per unit is ${per.toFixed(2)} kg; typical for ${b.category} is ${r[0]}-${r[1]} kg`]);
+  if(b.recycledWeightKg&&Math.abs(b.recycledWeightKg-b.totalWeightKg)/b.totalWeightKg>.25)f.push([25,`Recycled weight (${b.recycledWeightKg} kg) differs by more than 25% from registered weight (${b.totalWeightKg} kg)`]);
+  if(b.certificateNo&&db.batches.some(o=>o.id!==b.id&&o.certificateNo===b.certificateNo))f.push([30,`Certificate ${b.certificateNo} is used by another batch`]);
+  const g=b.history.find(h=>h.stage=="Registered"),c=b.history.find(h=>h.stage=="Recycled");
+  if(g&&c&&new Date(c.date)-new Date(g.date)<864e5)f.push([25,"Registered and recycled within 24 hours, which is unusually fast"]);
+  if(!ok)f.push([60,"Audit trail broken: history was changed after it was recorded"]);
+  const risk=Math.min(100,f.reduce((n,x)=>n+x[0],0));
+  return{...b,flags:f.map(x=>x[1]),risk,level:risk>=60?"High":risk>=25?"Medium":"Low",ok};
+}
+
+// ---- actions ----
+function go(n,id){V={...V,n,id};render()}
+function doLogin(e){e.preventDefault();const u=$("u").value.trim().toLowerCase();
+  if(!USERS[u]||$("p").value!==PW)return err("Wrong username or password. Use brand, recycler or regulator with password "+PW+".");
+  me={username:u,role:USERS[u]};try{sessionStorage.setItem("rt_me",JSON.stringify(me))}catch(x){}V.n="dash";render()}
+function logout(){me=null;try{sessionStorage.removeItem("rt_me")}catch(x){}render()}
+async function doNew(e){e.preventDefault();const f=new FormData(e.target),q=+f.get("quantity"),w=+f.get("totalWeightKg");
+  if(me.role!=="Brand")return err("Only a Brand can register a batch.");
+  if(!f.get("productName").trim()||!(q>0)||!(w>0))return err("Enter a product name and positive numbers for quantity and weight.");
+  const b={id:"B-"+(1001+db.batches.length),brand:"Demo Brand",productName:f.get("productName").trim().slice(0,80),category:f.get("category"),quantity:q,totalWeightKg:w,currentStage:STAGES[0],history:[]};
+  await addEntry(b,{stage:STAGES[0],date:new Date().toISOString(),note:"Batch registered",recordedBy:me.role});
+  db.batches.push(b);save();go("detail",b.id)}
+async function doAdvance(id,e){e.preventDefault();const b=db.batches.find(x=>x.id==id);
+  if(!await chainOk(b))return err("The audit trail is broken, so this batch is locked.");
+  const n=STAGES.indexOf(b.currentStage)+1,rule=RULES[n];
+  if(!rule.r.includes(me.role))return err(`Only ${rule.r.join(" or ")} can move a batch to “${STAGES[n]}”.`);
+  const proof={};for(const k of rule.n){const v=$("f_"+k).value.trim();if(!v||(k=="recycledWeightKg"&&!(+v>0)))return err("Missing required proof: "+LABEL[k]+".");proof[k]=k=="recycledWeightKg"?+v:v.slice(0,80);b[k]=proof[k]}
+  b.currentStage=STAGES[n];await addEntry(b,{stage:STAGES[n],date:new Date().toISOString(),note:$("f_note").value.trim().slice(0,200),recordedBy:me.role,proof});
+  save();render()}
+function tamper(id){const b=db.batches.find(x=>x.id==id);if(b.history.length>1){b.history[1].note=(b.history[1].note||"")+" (edited later)";save();render()}}
+async function reset(){db=await seed();save();go("dash")}
+
+// ---- views ----
+function loginView(){$("app").innerHTML=`<div class="panel login"><h2>Log in</h2>
+<form onsubmit="doLogin(event)"><label>Username</label><input id="u" value="brand" autocomplete="username"><label>Password</label><input id="p" type="password" value="${PW}" autocomplete="current-password">
+<button>Log in</button><div class="err" id="err"></div></form>
+<p class="hint">Demo users: brand, recycler, regulator. Password: ${PW}. All data stays in this browser.</p></div>`}
+function rows(){const q=V.q.toLowerCase(),t=cache.filter(b=>(!V.st||b.currentStage==V.st)&&(b.id+b.productName+b.category).toLowerCase().includes(q));
+  $("tb").innerHTML=t.map(b=>`<tr class="go" onclick="go('detail','${b.id}')"><td><b>${b.id}</b></td><td>${esc(b.productName)}</td><td>${b.quantity}</td><td>${esc(b.currentStage)}</td><td><span class="b ${b.level}">${b.level}, score ${b.risk}</span></td></tr>`).join("")||`<tr><td colspan="5">No batches match. Clear the search or filter.</td></tr>`}
+async function dashView(){
+  cache=await Promise.all(db.batches.map(enrich));const T=db.targetPercent,tot=cache.reduce((n,b)=>n+b.quantity,0);
+  const rec=cache.filter(b=>STAGES.indexOf(b.currentStage)>=4).reduce((n,b)=>n+b.quantity,0),pct=tot?Math.round(rec/tot*100):0;
+  const gap=Math.max(0,Math.ceil(tot*T/100)-rec),risky=cache.filter(b=>b.level!="Low").length;
+  const bs=STAGES.map(s=>[s,cache.filter(b=>b.currentStage==s).reduce((n,b)=>n+b.quantity,0)]),mx=Math.max(1,...bs.map(x=>x[1]));
+  $("app").innerHTML=`<div class="stats">
+<div class="stat"><small>Units registered</small><b>${tot}</b></div>
+<div class="stat ${pct>=T?"":"bad"}"><small>Compliance against ${T}% target</small><b>${pct}%</b></div>
+<div class="stat ${gap?"bad":""}"><small>Units still to recycle to meet target</small><b>${gap}</b></div>
+<div class="stat ${risky?"bad":""}"><small>Batches at medium or high risk</small><b>${risky}</b></div></div>
+<div class="panel bars"><h3>Where the units are in their lifecycle</h3>${bs.map(([s,n])=>`<div class="row"><span class="l">${s}</span><span class="t"><span class="f" style="width:${n/mx*100}%"></span></span><span>${n}</span></div>`).join("")}</div>
+<div class="bar"><input id="q" placeholder="Search by ID, product or category" value="${esc(V.q)}" oninput="V.q=this.value;rows()">
+<select id="st" onchange="V.st=this.value;rows()"><option value="">All stages</option>${STAGES.map(s=>`<option ${V.st==s?"selected":""}>${s}</option>`).join("")}</select>
+<button class="ghost" onclick="go('report')">View compliance report</button></div>
+<div class="wrap"><table><tr><th>ID</th><th>Product</th><th>Units</th><th>Stage</th><th>AI risk</th></tr><tbody id="tb"></tbody></table></div>`;rows()}
+function newView(){$("app").innerHTML=`<div class="panel"><h2>Register a product batch</h2><form onsubmit="doNew(event)">
+<label>Product name</label><input name="productName" required>
+<label>Category</label><select name="category"><option value="laptop">Laptop</option><option value="phone">Phone</option><option value="tablet">Tablet</option><option value="tv">TV</option></select>
+<label>Quantity (units)</label><input name="quantity" type="number" min="1" required>
+<label>Total weight (kg)</label><input name="totalWeightKg" type="number" step="0.1" min="0.1" required>
+<button>Register batch</button><div class="err" id="err"></div></form></div>`}
+async function detailView(){
+  const raw=db.batches.find(x=>x.id==V.id);if(!raw)return go("dash");const b=await enrich(raw);
+  const cur=STAGES.indexOf(b.currentStage),n=cur+1,rule=RULES[n],can=rule&&rule.r.includes(me.role);
+  $("app").innerHTML=`<button class="ghost" onclick="go('dash')">Back to dashboard</button>
+<div class="panel" style="margin-top:12px"><h2>${b.id}: ${esc(b.productName)} <span class="b ${b.level}">${b.level} risk, score ${b.risk}</span></h2>
+<p class="hint">${b.quantity} units, ${b.totalWeightKg} kg, ${esc(b.category)}</p>
+<div class="strip">${STAGES.map((s,i)=>`<div class="${i<cur?"d":i==cur?"c":""}">${i<cur?"✓ ":""}${s}</div>`).join("")}</div>
+${b.flags.map(f=>`<div class="flag">${esc(f)}</div>`).join("")}
+${!rule?`<p class="ok">This batch has completed its lifecycle.</p>`:can?`<h3>Next: ${STAGES[n]}</h3><form onsubmit="doAdvance('${b.id}',event)">
+${rule.n.map(k=>`<label>${LABEL[k]}</label><input id="f_${k}" ${k=="recycledWeightKg"?'type="number" step="0.1"':""}>`).join("")}
+<label>Note (optional)</label><input id="f_note"><button>Move to ${STAGES[n]}</button><div class="err" id="err"></div></form>`
+:`<div class="note">The next step, “${STAGES[n]}”, must be done by ${rule.r.join(" or ")}. You are logged in as ${me.role}. Log out and switch user to continue.</div>`}</div>
+<div class="panel"><h3>Chain of custody <span class="${b.ok?"ok":"bad"}">${b.ok?"hash chain verified":"tampering detected"}</span></h3>
+<div class="chain ${b.ok?"":"broken"}" style="margin-top:14px">${b.history.map(h=>`<div class="node"><b>${h.stage}</b>, ${fmt(h.date)}, by ${h.recordedBy}${h.note?`<br>${esc(h.note)}`:""}
+<div class="hash">${h.hash.slice(0,12)} follows ${h.prevHash.slice(0,8)}</div></div>`).join("")}</div>
+<button class="ghost" onclick="tamper('${b.id}')">Demo: edit this history without re-signing</button></div>`}
+async function reportView(){
+  const c=await Promise.all(db.batches.map(enrich)),q=v=>`"${String(v??"").replace(/"/g,'""')}"`;
+  const t=["ID,Product,Category,Units,Registered kg,Stage,Recycled kg,Recycler,Certificate,Risk,Flags",...c.map(b=>[b.id,b.productName,b.category,b.quantity,b.totalWeightKg,b.currentStage,b.recycledWeightKg,b.recycler,b.certificateNo,b.level+" ("+b.risk+")",b.flags.join("; ")].map(q).join(","))].join("\n");
+  $("app").innerHTML=`<button class="ghost" onclick="go('dash')">Back to dashboard</button><div class="panel" style="margin-top:12px"><h2>Compliance report</h2>
+<p class="hint">Select the text, copy it, and paste it into a spreadsheet or file.</p><textarea id="csv" readonly>${esc(t)}</textarea>
+<button onclick="$('csv').select()">Select all</button></div>`}
+
+async function render(){
+  if(!db)await init();
+  $("nav").innerHTML=me?`<button class="${V.n=="dash"?"on":""}" onclick="go('dash')">Dashboard</button>${me.role=="Brand"?`<button class="${V.n=="new"?"on":""}" onclick="go('new')">Register batch</button>`:""}`:"";
+  $("who").innerHTML=me?`${me.username} <span class="b">${me.role}</span> <button onclick="reset()" title="Restore the sample batches">Reset demo data</button><button onclick="logout()">Log out</button>`:"";
+  if(!me)return loginView();
+  try{if(V.n=="new"&&me.role=="Brand")newView();else if(V.n=="detail")await detailView();else if(V.n=="report")await reportView();else await dashView()}
+  catch(x){$("app").innerHTML=`<div class="panel err">Something went wrong: ${esc(x.message)}. Reload the page and try again.</div>`}
+}
+render();
+</script>
+</body>
+</html>
